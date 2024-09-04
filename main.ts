@@ -1,4 +1,54 @@
+interface Issue {
+  title: string;
+  url: string;
+  createdAt: string;
+}
 
+interface PullRequest {
+  title: string;
+  url: string;
+  createdAt: string;
+}
+
+interface Commit {
+  message: string;
+  committedDate: string;
+  url: string;
+}
+
+interface Repository {
+  name: string;
+  defaultBranchRef: {
+    target: {
+      history: {
+        edges: { node: Commit }[];
+      };
+    };
+  } | null;
+}
+
+interface ContributionsCollection {
+  issueContributions: {
+    nodes: { issue: Issue }[];
+  };
+  pullRequestContributions: {
+    nodes: { pullRequest: PullRequest }[];
+  };
+}
+
+interface User {
+  login: string;
+  contributionsCollection: ContributionsCollection;
+  repositories: {
+    nodes: Repository[];
+  };
+}
+
+interface ResponseData {
+  data: {
+    user: User;
+  };
+}
 
 if (Deno.args.length !== 1) {
   console.log("Usage: github-activity <github-username>")
@@ -108,6 +158,40 @@ async function fetchRecentActivities(username: string, token: string) {
 }
 
 // Prettfy the response
-function formatResponse(response: ) {
-  
+function formatResponse(response: ResponseData) {
+  const user = response.data.user;
+  console.log(`### User Information\n- **Username:** ${user.login}\n`);
+
+  console.log(`### Contributions`);
+  console.log(`#### Issues`);
+  user.contributionsCollection.issueContributions.nodes.forEach((node: { issue: { title: string; url: string; createdAt: string } }) => {
+    const issue = node.issue;
+    console.log(`- **Title:** ${issue.title}`);
+    console.log(`  - **URL:** ${issue.url}`);
+    console.log(`  - **Created At:** ${issue.createdAt}\n`);
+  });
+
+  console.log(`#### Pull Requests`);
+  user.contributionsCollection.pullRequestContributions.nodes.forEach((node: { pullRequest: { title: string; url: string; createdAt: string } }) => {
+    const pr = node.pullRequest;
+    console.log(`- **Title:** ${pr.title}`);
+    console.log(`  - **URL:** ${pr.url}`);
+    console.log(`  - **Created At:** ${pr.createdAt}\n`);
+  });
+
+  console.log(`### Repositories`);
+  user.repositories.nodes.forEach((repo: { name: string; defaultBranchRef: { target: { history: { edges: { node: { message: string; committedDate: string; url: string } }[] } } } | null }) => {
+    console.log(`#### ${repo.name}`);
+    if (repo.defaultBranchRef && repo.defaultBranchRef.target) {
+      console.log(`- **Commits:**`);
+      repo.defaultBranchRef.target.history.edges.forEach(edge => {
+        const commit = edge.node;
+        console.log(`  - **Message:** ${commit.message}`);
+        console.log(`    - **Date:** ${commit.committedDate}`);
+        console.log(`    - **URL:** ${commit.url}\n`);
+      });
+    } else {
+      console.log(`- **No commits available**\n`);
+    }
+  });
 }
