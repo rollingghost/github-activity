@@ -1,0 +1,9 @@
+{
+  "tasks": {
+    "dev": "deno run --watch main.ts"
+  },
+  "imports": {
+    "@fmp/axios-http-methods": "jsr:@fmp/axios-http-methods@^0.2.0",
+    "@std/assert": "jsr:@std/assert@1"
+  }
+}
