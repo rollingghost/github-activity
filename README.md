@@ -1,7 +1,3 @@
-Sure! Here's a sample README for your project:
-
----
-
 # GitHub Activity Fetcher
 
 ## Overview
@@ -10,6 +6,11 @@ GitHub Activity Fetcher is a TypeScript application that fetches and displays
 recent GitHub activities for a specified user. The application retrieves
 information about issues, pull requests, and repositories, and formats the
 output in a human-readable format.
+
+## Project URL
+
+Find the project [here](https://roadmap.sh/projects/github-user-activity) on
+[roadmap.sh](https://roadmap.sh)
 
 ## Features
 
